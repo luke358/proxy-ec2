@@ -2,7 +2,7 @@ import { ofetch } from "ofetch";
 
 export async function registryToE2C(port) {
   const proxyIp = process.env.PROXY_IP;
-  console.log(process.env.PRIVATE_IP_ADDRESS, process.env.PUBLIC_IP_ADDRESS, e2cIp);
+  console.log(process.env.PRIVATE_IP_ADDRESS, process.env.PUBLIC_IP_ADDRESS, proxyIp);
   while (true) {
     if (!globalThis.lastFetchTs || Date.now() - globalThis.lastFetchTs > 5000) {
       try {
