@@ -1,10 +1,12 @@
+import 'dotenv/config';
+
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 const { json } = bodyParser;
 import https from 'https';
-import { registryToE2C } from './utlis';
+import { registryToE2C } from './utils/index.js';
 
 const agent = new https.Agent({
   keepAlive: true, // 复用连接
@@ -25,6 +27,7 @@ async function bootstrap() {
    */
   // 代理路由
   app.use('/proxy', (req, res, next) => {
+    globalThis.lastFetchTs = Date.now();
     let { url } = req.query;
     if (!url) {
       return res.status(400).json({ message: 'url is required' });
@@ -55,10 +58,11 @@ async function bootstrap() {
 
 
   // 启动服务器
-  const port = 6602;
-  app.listen(port, async () => {
-    console.log(`代理服务器已启动，监听端口 ${port}`);
-    registryToE2C()
+  // const port = 6602;
+  const server = app.listen(0, async () => {
+    const actualPort = server.address().port; // 获取实际分配的端口
+    console.log(`代理服务器已启动，监听端口 ${actualPort}`);
+    registryToE2C(actualPort)
   });
 
 
